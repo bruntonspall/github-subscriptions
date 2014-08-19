@@ -11,6 +11,7 @@ mccabe==0.2.1
 oauthlib==0.6.3
 pep8==1.5.7
 pyflakes==0.8.1
+redis==2.10.3
 requests==2.3.0
 requests-oauth==0.4.1
 requests-oauthlib==0.4.1
