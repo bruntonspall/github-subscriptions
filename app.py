@@ -29,8 +29,6 @@ redis = redis.from_url(os.getenv('REDISTOGO_URL', 'redis://localhost:6379'))
 def new_session(state=None, token=None):
     sess = getattr(g, 'session', None)
     if not sess:
-        if 'github_state' in session and not state:
-            state = session['github_state']
         if 'github_token' in session and not token:
             token = session['github_token']
 
