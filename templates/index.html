@@ -23,11 +23,14 @@
         <div class="pure-g">
             <div class="pure-u-1"><h2>{{orgname}}</h2></div>
             {% for repo in org %}
-            <fieldset class="pure-u-1-4{% if repo.subscription and not repo.subscription.ignored %} highlight{%endif%}">
+            <fieldset class="pure-u-1-4{% if repo.private %} highlight{%endif%}">
                     <label for={{repo.id}}>
                         <input id={{repo.id}} type="checkbox" {% if repo.subscription and not repo.subscription.ignored %}checked=true{% endif %}/>
-                        {{repo.full_name}}
+                        {{repo.name}}
                     </label>
+                    {% if repo.subscription and repo.subscription.subscribed %}<span class="pill-subscribed">subscribed</span>{% endif %}
+                    {% if repo.subscription and repo.subscription.ignored %}<span class="pill-ignored">ignored</span>{% endif %}
+                    {% if not repo.subscription %}<span class="pill-error">not subscribed</span>{% endif %}
             </fieldset>
             {% endfor %}
         </div>

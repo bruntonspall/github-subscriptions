@@ -17,7 +17,7 @@
     background: #666;
 }
 .pure-menu.pure-menu-blackbg .pure-menu-selected a {
-    background: #542437;
+    background: #53777A;
 }
 .pure-menu.pure-menu-blackbg .pure-menu-selected a:hover {
     color: #efefef;
@@ -27,5 +27,27 @@
 }
 
 .highlight {
-  background: #ECD078;
+  background: #D95B43;
 }
+
+.pill-error,
+.pill-subscribed,
+.pill-ignored,
+.pill-pull {
+  color: white;
+  border-radius: 4px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  padding: 4px 8px;
+}
+
+.pill-subscribed {
+  background: rgb(223, 117, 60);
+} 
+
+.pill-ignored {
+  background: rgb(28, 184, 65);
+} 
+
+.pill-error {
+  background: rgb(184, 28, 65);
+} 
