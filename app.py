@@ -80,7 +80,6 @@ def before_request():
 def login():
     github = new_session()
     github.scope = ['repo', 'notifications']
-    github.redirect_uri = 'http://localhost:5000/oauth/callback'
     authorization_url, state = github.authorization_url(authorization_base_url)
     logging.info("authorization_url: %s" % (authorization_url))
     session['github_state'] = state
