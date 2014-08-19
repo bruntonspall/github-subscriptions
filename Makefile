@@ -15,10 +15,10 @@ all: default local_device_tests
 	$(call green,"[Build with device tests successful]")
 
 venv: venv/bin/activate
-venv/bin/activate: requirements.dev.txt requirements.prod.txt
+venv/bin/activate: requirements.txt
 	test -d venv || virtualenv venv
 	. venv/bin/activate; pip install --upgrade 'pip>=1.4';
-	. venv/bin/activate; pip install -r requirements.dev.txt
+	. venv/bin/activate; pip install -r requirements.txt
 	touch venv/bin/activate
 	$(call green,"[Making venv successful]")
 
