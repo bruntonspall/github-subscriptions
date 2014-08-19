@@ -2,23 +2,37 @@
 <html>
 <head>
 <link href="/static/pure-min.css" rel="stylesheet" type="text/css" />
+<link href="/static/custom.css" rel="stylesheet" type="text/css" />
 <meta charset=utf-8 />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JS Bin</title>
 </head>
 <body>
-    <h1>My Github Hack</h1>
-  <div class="pure-g">
+<header>
+<nav class="pure-menu pure-menu-blackbg pure-menu-open pure-menu-horizontal">
+<a href="#" class="pure-menu-heading">Github Subscriptions</a>
+    <ul>
+        <li class="pure-menu-selected"><a href="#">Subscriptions</a></li>
+        <!-- other items ... -->
+    </ul>
+</nav>
+</header>
+<section class="dashboard">
     <form class="pure-form" id="subscriptions">
-        {% for repo in repos %}
-        <div class="pure-u-1-4">
-            <div class="pure-g">
-                <div class="pure-u-1-4"><input type="checkbox" {% if not repo.subscription.ignored %}checked=true{% endif %}/></div>
-                <p class="pure-u-3-4">{{repo.full_name}}</p>
-            </div>
+        {% for orgname,org in orgs.items() %}
+        <div class="pure-g">
+            <div class="pure-u-1"><h2>{{orgname}}</h2></div>
+            {% for repo in org %}
+            <fieldset class="pure-u-1-4{% if repo.subscription and not repo.subscription.ignored %} highlight{%endif%}">
+                    <label for={{repo.id}}>
+                        <input id={{repo.id}} type="checkbox" {% if repo.subscription and not repo.subscription.ignored %}checked=true{% endif %}/>
+                        {{repo.full_name}}
+                    </label>
+            </fieldset>
+            {% endfor %}
         </div>
         {% endfor %}
     </form>
-  </div>
+</section>
 </body>
 </html>

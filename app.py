@@ -1,9 +1,11 @@
 import os
+import redis
 from flask import Flask, g, url_for, redirect, request, session, \
     jsonify, render_template
 from requests_oauthlib import OAuth2Session
 from flask.ext.appconfig import HerokuConfig
 from cachecontrol import CacheControl
+from cachecontrol.caches import RedisCache
 import requests.exceptions
 import logging
 
@@ -21,6 +23,8 @@ authorization_base_url = 'https://github.com/login/oauth/authorize'
 consumer_key = os.environ['GITHUB_OAUTH_KEY']
 consumer_secret = os.environ['GITHUB_OAUTH_SECRET']
 
+redis = redis.from_url(os.getenv('REDISTOGO_URL', 'redis://localhost:6379'))
+
 
 def new_session(state=None, token=None):
     sess = getattr(g, 'session', None)
@@ -29,10 +33,11 @@ def new_session(state=None, token=None):
             state = session['github_state']
         if 'github_token' in session and not token:
             token = session['github_token']
+
         sess = g.session = CacheControl(OAuth2Session(
             consumer_key,
             state=state,
-            token=token))
+            token=token), RedisCache(redis))
     return sess
 
 
@@ -47,21 +52,21 @@ def github_get(url, partial=True):
 
 
 def fetch_users_repos():
-    raw_repos = github_get('user/repos')
+    raw_repos = {"your-repos": github_get('user/repos')}
     orgs = github_get('user/orgs')
-    orgs = []
     for org in orgs:
         org_repos = github_get(org['repos_url'], partial=False)
-        raw_repos.extend(org_repos)
-    for repo in raw_repos:
-        try:
-            repo['subscription'] = github_get(
-                repo['subscription_url'],
-                partial=False)
-        except requests.exceptions.HTTPError, e:
-            logger.error("Subscription %s exception %s" % (
-                repo['full_name'], e))
-            pass
+        raw_repos[org['login']] = org_repos
+    for orgname, repos in raw_repos.items():
+        for repo in repos:
+            try:
+                repo['subscription'] = github_get(
+                    repo['subscription_url'],
+                    partial=False)
+            except requests.exceptions.HTTPError, e:
+                logger.error("Subscription %s exception %s" % (
+                    repo['full_name'], e))
+                pass
     return raw_repos
 
 
@@ -108,7 +113,7 @@ def oauth_authorized():
 def index():
     if 'github_token' not in session:
         return redirect(url_for('login', next=request.url))
-    return render_template('index.html', repos=fetch_users_repos())
+    return render_template('index.html', orgs=fetch_users_repos())
 
 
 @app.route('/myrepos')
